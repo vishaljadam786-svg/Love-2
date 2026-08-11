@@ -32,6 +32,54 @@
             z-index: 1;
         }
 
+        /* Top Attractive Golden Music Button */
+        #music-control {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: rgba(20, 15, 5, 0.75);
+            border: 2px solid #ffd700;
+            border-radius: 30px;
+            color: #ffd700;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            animation: goldenGlow 2s infinite ease-in-out;
+            transition: transform 0.2s ease;
+        }
+
+        #music-control:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        /* Glowing and Dimming Golden Effect */
+        @keyframes goldenGlow {
+            0% {
+                box-shadow: 0 0 5px #ffd700, 0 0 10px #ffae00, inset 0 0 5px #ffd700;
+                border-color: #ffe600;
+            }
+            50% {
+                box-shadow: 0 0 20px #ffd700, 0 0 35px #ff8800, inset 0 0 12px #ffe600;
+                border-color: #ffffff;
+            }
+            100% {
+                box-shadow: 0 0 5px #ffd700, 0 0 10px #ffae00, inset 0 0 5px #ffd700;
+                border-color: #ffe600;
+            }
+        }
+
+        #music-icon {
+            font-size: 16px;
+        }
+
         #start-btn {
             position: absolute;
             z-index: 10;
@@ -143,7 +191,16 @@
 
     <canvas id="canvas"></canvas>
 
-    <!-- Initial Button -->
+    <!-- Golden Music Control Button (Top Center) -->
+    <button id="music-control" onclick="toggleAudio()">
+        <span id="music-icon">🎵</span>
+        <span id="music-btn-text">PLAY MUSIC</span>
+    </button>
+
+    <!-- Background Audio File -->
+    <audio id="bg-audio" src="audio.mp3" loop></audio>
+
+    <!-- Initial Start Button -->
     <div id="start-btn" onclick="startExperience(event)">
         <div class="heart-icon">❤️</div>
         <div class="btn-title">Tap to Play Video</div>
@@ -153,7 +210,6 @@
     <!-- Final Text Overlay with Video -->
     <div id="final-text">
         <div class="video-box">
-            <!-- Set to video.mp4 -->
             <video id="final-video" src="video.mp4" loop muted playsinline></video>
         </div>
         <div class="card-text-main">
@@ -165,6 +221,9 @@
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const bgAudio = document.getElementById('bg-audio');
+        const musicIcon = document.getElementById('music-icon');
+        const musicBtnText = document.getElementById('music-btn-text');
 
         let width, height;
         function resize() {
@@ -173,6 +232,20 @@
         }
         window.addEventListener('resize', resize);
         resize();
+
+        // Audio Toggle Function
+        function toggleAudio() {
+            if (bgAudio.paused) {
+                bgAudio.play().then(() => {
+                    musicIcon.textContent = '⏸️';
+                    musicBtnText.textContent = 'PAUSE MUSIC';
+                }).catch(err => console.log("Playback error:", err));
+            } else {
+                bgAudio.pause();
+                musicIcon.textContent = '🎵';
+                musicBtnText.textContent = 'PLAY MUSIC';
+            }
+        }
 
         // Arrays & Flags
         let fallingHearts = [];
@@ -211,12 +284,15 @@
         }
 
         window.addEventListener('click', (e) => {
+            // Ignore click if clicking the music button
+            if (e.target.closest('#music-control')) return;
             for (let i = 0; i < 6; i++) {
                 tapHearts.push(new TapHeart(e.clientX, e.clientY));
             }
         });
 
         window.addEventListener('touchstart', (e) => {
+            if (e.target.closest('#music-control')) return;
             let touch = e.touches[0];
             for (let i = 0; i < 6; i++) {
                 tapHearts.push(new TapHeart(touch.clientX, touch.clientY));
@@ -434,6 +510,12 @@
             isStarted = true;
 
             document.getElementById('start-btn').style.display = 'none';
+
+            // Auto start audio when main animation starts
+            bgAudio.play().then(() => {
+                musicIcon.textContent = '⏸️';
+                musicBtnText.textContent = 'PAUSE MUSIC';
+            }).catch(err => console.log("Audio autoplay suppressed"));
 
             let step = 0;
 
