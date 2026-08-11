@@ -313,10 +313,14 @@
         .modal-card {
             background: linear-gradient(135deg, #2b0015, #4d0026);
             border: 2px solid #ff3366;
-            padding: 30px 25px;
+            padding: 25px 20px;
             border-radius: 25px;
             box-shadow: 0 0 40px #ff0055, inset 0 0 15px #ff3366;
             max-width: 320px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -325,31 +329,48 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* Modal Inner Video Container */
+        .modal-video-box {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 20px #ff0055;
+            margin: 10px 0 15px 0;
+        }
+
+        .modal-video-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .modal-card h2 {
             color: #ffd700;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             text-shadow: 0 0 12px #ffae00;
         }
 
         .modal-card p {
             color: #ffffff;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            margin-top: 10px;
+            margin-top: 5px;
             text-shadow: 0 0 10px #ff3366;
             line-height: 1.4;
         }
 
         .modal-close-btn {
-            margin-top: 20px;
-            padding: 10px 25px;
+            margin-top: 18px;
+            padding: 9px 24px;
             background: linear-gradient(45deg, #ff0055, #ff3366);
             border: none;
             color: #fff;
             border-radius: 20px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 0 15px #ff0055;
@@ -363,6 +384,7 @@
 </head>
 <body>
 
+    <!-- Top Golden Music Button -->
     <button id="music-control" onclick="toggleAudio()">
         <span id="music-icon">🎵</span>
         <span id="music-btn-text">PLAY MUSIC</span>
@@ -372,13 +394,16 @@
 
     <audio id="bg-audio" src="audio.mp3" loop></audio>
 
+    <!-- Initial Start Button -->
     <div id="start-btn" onclick="startExperience(event)">
         <div class="heart-icon">❤️</div>
         <div class="btn-title">Tap to Play Video</div>
         <div class="btn-subtitle">EXPERIENCE THE MAGIC</div>
     </div>
 
+    <!-- Final Overlay Screen -->
     <div id="final-text">
+        <!-- Floating Polaroids -->
         <div class="polaroid polaroid-1">
             <img src="image1.jpg" alt="Memory 1" onerror="this.src='image1.png'">
         </div>
@@ -406,9 +431,15 @@
         </div>
     </div>
 
+    <!-- Celebration Popup with Video -->
     <div id="celebration-modal">
         <div class="modal-card">
             <h2>YAYYY! 🎉💖</h2>
+            
+            <div class="modal-video-box">
+                <video id="popup-video" src="video.mp4" loop muted playsinline></video>
+            </div>
+
             <p>i know you love me ☺️</p>
             <button class="modal-close-btn" onclick="closeModal()">Love You Too! ❤️</button>
         </div>
@@ -770,7 +801,7 @@
             noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
         }
 
-        // Accept YES Button with Explosion Fireworks
+        // Accept YES Button with Explosion Fireworks & Video Play
         function acceptProposal() {
             for (let burst = 0; burst < 3; burst++) {
                 setTimeout(() => {
@@ -781,7 +812,12 @@
                     }
                 }, burst * 200);
             }
+            
             document.getElementById('celebration-modal').style.display = 'flex';
+            
+            const popupVideo = document.getElementById('popup-video');
+            popupVideo.currentTime = 0;
+            popupVideo.play().catch(err => console.log("Popup video play suppressed"));
         }
 
         function closeModal() {
