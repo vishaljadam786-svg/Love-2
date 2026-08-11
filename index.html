@@ -30,6 +30,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            transform: translateZ(0); /* Hardware Acceleration */
         }
 
         /* Fixed Top Golden Music Button */
@@ -243,6 +244,7 @@
             border-radius: 4px;
             pointer-events: auto;
             animation: floatPhoto 4s ease-in-out infinite alternate;
+            transform: translateZ(0);
         }
 
         .polaroid img {
@@ -306,6 +308,7 @@
             flex-direction: column;
             align-items: center;
             animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateZ(0);
         }
 
         @keyframes popUp {
@@ -322,12 +325,15 @@
             border: 3px solid #ffd700;
             box-shadow: 0 0 20px #ff0055;
             margin: 10px 0 15px 0;
+            background: #000;
+            transform: translateZ(0);
         }
 
         .modal-video-box video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .modal-card h2 {
@@ -376,7 +382,7 @@
 
     <canvas id="canvas"></canvas>
 
-    <audio id="bg-audio" src="audio.mp3" loop></audio>
+    <audio id="bg-audio" src="audio.mp3" loop preload="auto"></audio>
 
     <!-- Initial Start Button -->
     <div id="start-btn" onclick="startExperience(event)">
@@ -412,13 +418,13 @@
         </div>
     </div>
 
-    <!-- Celebration Popup with Video -->
+    <!-- Celebration Popup with Preloaded Video -->
     <div id="celebration-modal">
         <div class="modal-card">
             <h2>YAYYY! 🎉💖</h2>
             
             <div class="modal-video-box">
-                <video id="popup-video" src="video.mp4" loop muted playsinline></video>
+                <video id="popup-video" src="video.mp4" loop muted playsinline preload="auto" webkit-playsinline></video>
             </div>
 
             <p>i know you love me ☺️</p>
@@ -432,6 +438,7 @@
         const bgAudio = document.getElementById('bg-audio');
         const musicIcon = document.getElementById('music-icon');
         const musicBtnText = document.getElementById('music-btn-text');
+        const popupVideo = document.getElementById('popup-video');
 
         let width, height;
         function resize() {
@@ -440,6 +447,13 @@
         }
         window.addEventListener('resize', resize);
         resize();
+
+        // Background Video Load Request
+        window.addEventListener('load', () => {
+            if (popupVideo) {
+                popupVideo.load();
+            }
+        });
 
         // Audio Context for Magic Sparkle SFX
         let audioCtx;
@@ -517,7 +531,7 @@
         window.addEventListener('click', (e) => {
             if (e.target.closest('#music-control') || e.target.closest('.final-content') || e.target.closest('#celebration-modal')) return;
             playSparkleSound();
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 5; i++) {
                 tapHearts.push(new TapHeart(e.clientX, e.clientY));
             }
         });
@@ -526,7 +540,7 @@
             if (e.target.closest('#music-control') || e.target.closest('.final-content') || e.target.closest('#celebration-modal')) return;
             playSparkleSound();
             let touch = e.touches[0];
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 5; i++) {
                 tapHearts.push(new TapHeart(touch.clientX, touch.clientY));
             }
         });
@@ -584,7 +598,7 @@
                 ctx.save();
                 ctx.globalAlpha = this.alpha;
                 ctx.fillStyle = '#ffffff';
-                ctx.shadowBlur = 12;
+                ctx.shadowBlur = 10;
                 ctx.shadowColor = '#ffffff';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -598,11 +612,11 @@
                 this.x = x;
                 this.y = y;
                 let angle = Math.random() * Math.PI * 2;
-                let speed = Math.random() * 7 + 2;
+                let speed = Math.random() * 6 + 2;
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
                 this.alpha = 1;
-                this.decay = Math.random() * 0.02 + 0.008;
+                this.decay = Math.random() * 0.02 + 0.01;
                 this.color = `hsl(${Math.random() * 60 + 310}, 100%, 65%)`;
             }
             update() {
@@ -615,16 +629,16 @@
                 ctx.save();
                 ctx.globalAlpha = Math.max(0, this.alpha);
                 ctx.fillStyle = this.color;
-                ctx.shadowBlur = 8;
+                ctx.shadowBlur = 6;
                 ctx.shadowColor = this.color;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
         }
 
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 30; i++) {
             fallingHearts.push(new FallingHeart());
         }
 
@@ -645,7 +659,7 @@
             memCtx.fillText(text, width / 2, height / 2);
 
             let imgData = memCtx.getImageData(0, 0, width, height).data;
-            let step = 3;
+            let step = 4;
 
             for (let y = 0; y < height; y += step) {
                 for (let x = 0; x < width; x += step) {
@@ -659,14 +673,14 @@
 
         function drawRealisticGlowHeart(cx, cy, scale, maxT) {
             ctx.save();
-            ctx.shadowBlur = 30;
+            ctx.shadowBlur = 25;
             ctx.shadowColor = '#ff0055';
             ctx.strokeStyle = '#ff3366';
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 5;
             ctx.lineCap = 'round';
 
             ctx.beginPath();
-            let steps = 180;
+            let steps = 150;
             for (let i = 0; i <= steps * maxT; i++) {
                 let t = (i / steps) * Math.PI * 2;
                 let x = 16 * Math.pow(Math.sin(t), 3);
@@ -680,7 +694,7 @@
             }
             ctx.stroke();
 
-            ctx.shadowBlur = 15;
+            ctx.shadowBlur = 10;
             ctx.shadowColor = '#ffffff';
             ctx.strokeStyle = '#ff99bb';
             ctx.lineWidth = 2;
@@ -708,10 +722,10 @@
                 let heartScale = Math.min(width, height) * 0.018;
                 drawRealisticGlowHeart(width / 2, height / 2 - 20, heartScale, Math.min(heartProgress, 1));
 
-                if (Math.random() < 0.08) {
+                if (Math.random() < 0.05) {
                     let fx = Math.random() * width;
                     let fy = Math.random() * (height * 0.7);
-                    for (let i = 0; i < 30; i++) {
+                    for (let i = 0; i < 20; i++) {
                         fireworks.push(new FireworkParticle(fx, fy));
                     }
                 }
@@ -779,13 +793,13 @@
             noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
         }
 
-        // Accept YES Button with Explosion Fireworks & Video Play
+        // Accept YES Button with Explosion Fireworks & Smooth Video Playback
         function acceptProposal() {
             for (let burst = 0; burst < 3; burst++) {
                 setTimeout(() => {
                     let fx = Math.random() * (width * 0.6) + width * 0.2;
                     let fy = Math.random() * (height * 0.5) + height * 0.2;
-                    for (let i = 0; i < 80; i++) {
+                    for (let i = 0; i < 50; i++) {
                         fireworks.push(new FireworkParticle(fx, fy));
                     }
                 }, burst * 200);
@@ -793,13 +807,22 @@
             
             document.getElementById('celebration-modal').style.display = 'flex';
             
-            const popupVideo = document.getElementById('popup-video');
-            popupVideo.currentTime = 0;
-            popupVideo.play().catch(err => console.log("Popup video play suppressed"));
+            if (popupVideo) {
+                popupVideo.currentTime = 0;
+                let playPromise = popupVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(err => {
+                        console.log("Autoplay issue prevented: ", err);
+                    });
+                }
+            }
         }
 
         function closeModal() {
             document.getElementById('celebration-modal').style.display = 'none';
+            if (popupVideo) {
+                popupVideo.pause();
+            }
         }
 
         // Replay Magic
