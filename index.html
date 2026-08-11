@@ -32,26 +32,26 @@
             z-index: 1;
         }
 
-        /* Top Attractive Golden Music Button */
+        /* Fixed Top Golden Music Button */
         #music-control {
-            position: absolute;
-            top: 15px;
+            position: fixed;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 20;
+            z-index: 99999;
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 18px;
-            background: rgba(20, 15, 5, 0.75);
+            padding: 10px 20px;
+            background: #1a1100;
             border: 2px solid #ffd700;
             border-radius: 30px;
             color: #ffd700;
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 800;
             letter-spacing: 1px;
             cursor: pointer;
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px #ffd700;
             animation: goldenGlow 2s infinite ease-in-out;
             transition: transform 0.2s ease;
         }
@@ -60,18 +60,17 @@
             transform: translateX(-50%) scale(0.95);
         }
 
-        /* Glowing and Dimming Golden Effect */
         @keyframes goldenGlow {
             0% {
-                box-shadow: 0 0 5px #ffd700, 0 0 10px #ffae00, inset 0 0 5px #ffd700;
+                box-shadow: 0 0 8px #ffd700, 0 0 15px #ffae00, inset 0 0 5px #ffd700;
                 border-color: #ffe600;
             }
             50% {
-                box-shadow: 0 0 20px #ffd700, 0 0 35px #ff8800, inset 0 0 12px #ffe600;
+                box-shadow: 0 0 25px #ffd700, 0 0 40px #ff8800, inset 0 0 15px #ffe600;
                 border-color: #ffffff;
             }
             100% {
-                box-shadow: 0 0 5px #ffd700, 0 0 10px #ffae00, inset 0 0 5px #ffd700;
+                box-shadow: 0 0 8px #ffd700, 0 0 15px #ffae00, inset 0 0 5px #ffd700;
                 border-color: #ffe600;
             }
         }
@@ -125,7 +124,6 @@
             100% { transform: scale(1.25); }
         }
 
-        /* Final Heart Overlay with Video */
         #final-text {
             position: absolute;
             z-index: 5;
@@ -189,25 +187,22 @@
 </head>
 <body>
 
-    <canvas id="canvas"></canvas>
-
-    <!-- Golden Music Control Button (Top Center) -->
+    <!-- Fixed Golden Music Button -->
     <button id="music-control" onclick="toggleAudio()">
         <span id="music-icon">🎵</span>
         <span id="music-btn-text">PLAY MUSIC</span>
     </button>
 
-    <!-- Background Audio File -->
+    <canvas id="canvas"></canvas>
+
     <audio id="bg-audio" src="audio.mp3" loop></audio>
 
-    <!-- Initial Start Button -->
     <div id="start-btn" onclick="startExperience(event)">
         <div class="heart-icon">❤️</div>
         <div class="btn-title">Tap to Play Video</div>
         <div class="btn-subtitle">EXPERIENCE THE MAGIC</div>
     </div>
 
-    <!-- Final Text Overlay with Video -->
     <div id="final-text">
         <div class="video-box">
             <video id="final-video" src="video.mp4" loop muted playsinline></video>
@@ -233,7 +228,6 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Audio Toggle Function
         function toggleAudio() {
             if (bgAudio.paused) {
                 bgAudio.play().then(() => {
@@ -247,7 +241,6 @@
             }
         }
 
-        // Arrays & Flags
         let fallingHearts = [];
         let textParticles = [];
         let fireworks = [];
@@ -258,7 +251,6 @@
         
         const sequence = ["3", "2", "1", "YOU", "ARE", "MY", "RASMALAI"];
 
-        // Tap/Click Burst Hearts
         class TapHeart {
             constructor(x, y) {
                 this.x = x;
@@ -284,7 +276,6 @@
         }
 
         window.addEventListener('click', (e) => {
-            // Ignore click if clicking the music button
             if (e.target.closest('#music-control')) return;
             for (let i = 0; i < 6; i++) {
                 tapHearts.push(new TapHeart(e.clientX, e.clientY));
@@ -299,7 +290,6 @@
             }
         });
 
-        // Background Falling Hearts
         class FallingHeart {
             constructor() {
                 this.reset();
@@ -334,7 +324,6 @@
             }
         }
 
-        // Sparkle Text Particles
         class TextParticle {
             constructor(x, y) {
                 this.targetX = x;
@@ -363,7 +352,6 @@
             }
         }
 
-        // Firework Particle
         class FireworkParticle {
             constructor(x, y) {
                 this.x = x;
@@ -428,7 +416,6 @@
             }
         }
 
-        // Realistic Heart Curve
         function drawRealisticGlowHeart(cx, cy, scale, maxT) {
             ctx.save();
             ctx.shadowBlur = 30;
@@ -511,7 +498,6 @@
 
             document.getElementById('start-btn').style.display = 'none';
 
-            // Auto start audio when main animation starts
             bgAudio.play().then(() => {
                 musicIcon.textContent = '⏸️';
                 musicBtnText.textContent = 'PAUSE MUSIC';
