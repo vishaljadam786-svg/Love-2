@@ -30,10 +30,10 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            transform: translateZ(0); /* Hardware Acceleration */
+            transform: translateZ(0);
         }
 
-        /* Fixed Top Golden Music Button */
+        /* Top Golden Music Button */
         #music-control {
             position: fixed;
             top: 15px;
@@ -121,7 +121,7 @@
             100% { transform: scale(1.25); }
         }
 
-        /* Final Container */
+        /* Final Overlay Screen */
         #final-text {
             position: absolute;
             z-index: 10;
@@ -316,7 +316,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Modal Inner Video Container */
         .modal-video-box {
             width: 130px;
             height: 130px;
@@ -374,7 +373,6 @@
 </head>
 <body>
 
-    <!-- Top Golden Music Button -->
     <button id="music-control" onclick="toggleAudio()">
         <span id="music-icon">🎵</span>
         <span id="music-btn-text">PLAY MUSIC</span>
@@ -384,16 +382,13 @@
 
     <audio id="bg-audio" src="audio.mp3" loop preload="auto"></audio>
 
-    <!-- Initial Start Button -->
     <div id="start-btn" onclick="startExperience(event)">
         <div class="heart-icon">❤️</div>
         <div class="btn-title">Tap to Start</div>
         <div class="btn-subtitle">EXPERIENCE THE MAGIC</div>
     </div>
 
-    <!-- Final Overlay Screen -->
     <div id="final-text">
-        <!-- Floating Polaroids -->
         <div class="polaroid polaroid-1">
             <img src="image1.jpg" alt="Memory 1" onerror="this.src='image1.png'">
         </div>
@@ -418,7 +413,6 @@
         </div>
     </div>
 
-    <!-- Celebration Popup with Preloaded Video -->
     <div id="celebration-modal">
         <div class="modal-card">
             <h2>YAYYY! 🎉💖</h2>
@@ -448,14 +442,12 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Background Video Load Request
         window.addEventListener('load', () => {
             if (popupVideo) {
                 popupVideo.load();
             }
         });
 
-        // Audio Context for Magic Sparkle SFX
         let audioCtx;
         function playSparkleSound() {
             try {
@@ -480,7 +472,6 @@
             } catch(e) {}
         }
 
-        // Toggle Audio
         function toggleAudio() {
             if (bgAudio.paused) {
                 bgAudio.play().then(() => {
@@ -545,36 +536,30 @@
             }
         });
 
+        /* Fixed Clean Falling Heart Class */
         class FallingHeart {
             constructor() {
                 this.reset();
             }
             reset() {
                 this.x = Math.random() * width;
-                this.y = -20;
-                this.size = Math.random() * 12 + 6;
-                this.speedY = Math.random() * 1.5 + 1;
-                this.speedX = Math.random() * 0.6 - 0.3;
+                this.y = -30 - Math.random() * 50;
+                this.size = Math.random() * 14 + 10;
+                this.speedY = Math.random() * 1.8 + 1;
+                this.speedX = Math.sin(Math.random() * Math.PI) * 0.8 - 0.4;
                 this.opacity = Math.random() * 0.7 + 0.3;
+                this.symbol = ['❤️', '💖', '💕'][Math.floor(Math.random() * 3)];
             }
             update() {
                 this.y += this.speedY;
                 this.x += this.speedX;
-                if (this.y > height) this.reset();
+                if (this.y > height + 20) this.reset();
             }
             draw() {
                 ctx.save();
                 ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = '#ff3366';
-                ctx.beginPath();
-                let topCurveHeight = this.size * 0.3;
-                ctx.moveTo(this.x, this.y + topCurveHeight);
-                ctx.bezierCurveTo(this.x, this.y, this.x - this.size / 2, this.y, this.x - this.size / 2, this.y + topCurveHeight);
-                ctx.bezierCurveTo(this.x - this.size / 2, this.y + (this.size + topCurveHeight) / 2, this.x, this.y + this.size, this.x, this.y + this.size);
-                ctx.bezierCurveTo(this.x, this.y + (this.size + topCurveHeight) / 2, this.x + this.size / 2, this.x + (this.size + topCurveHeight) / 2, this.x + this.size / 2, this.y + topCurveHeight);
-                ctx.bezierCurveTo(this.x + this.size / 2, this.y, this.x, this.y, this.x, this.y + topCurveHeight);
-                ctx.closePath();
-                ctx.fill();
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillText(this.symbol, this.x, this.y);
                 ctx.restore();
             }
         }
@@ -638,7 +623,7 @@
             }
         }
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 35; i++) {
             fallingHearts.push(new FallingHeart());
         }
 
@@ -785,7 +770,6 @@
             }, 100);
         }
 
-        // Dodging NO Button Logic
         function dodgeNoButton() {
             const noBtn = document.getElementById('no-btn');
             const randomX = (Math.random() - 0.5) * 200;
@@ -793,7 +777,6 @@
             noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
         }
 
-        // Accept YES Button with Explosion Fireworks & Smooth Video Playback
         function acceptProposal() {
             for (let burst = 0; burst < 3; burst++) {
                 setTimeout(() => {
@@ -811,9 +794,7 @@
                 popupVideo.currentTime = 0;
                 let playPromise = popupVideo.play();
                 if (playPromise !== undefined) {
-                    playPromise.catch(err => {
-                        console.log("Autoplay issue prevented: ", err);
-                    });
+                    playPromise.catch(err => console.log(err));
                 }
             }
         }
@@ -825,7 +806,6 @@
             }
         }
 
-        // Replay Magic
         function replayMagic() {
             const finalText = document.getElementById('final-text');
             finalText.style.opacity = '0';
