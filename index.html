@@ -145,22 +145,6 @@
             z-index: 20;
         }
 
-        .video-box {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid #ff3366;
-            box-shadow: 0 0 20px #ff0055;
-            margin-bottom: 10px;
-        }
-
-        .video-box video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .card-text-main {
             color: #fff;
             font-size: 24px;
@@ -397,7 +381,7 @@
     <!-- Initial Start Button -->
     <div id="start-btn" onclick="startExperience(event)">
         <div class="heart-icon">❤️</div>
-        <div class="btn-title">Tap to Play Video</div>
+        <div class="btn-title">Tap to Start</div>
         <div class="btn-subtitle">EXPERIENCE THE MAGIC</div>
     </div>
 
@@ -412,9 +396,6 @@
         </div>
 
         <div class="final-content">
-            <div class="video-box">
-                <video id="final-video" src="video.mp4" loop muted playsinline></video>
-            </div>
             <div class="card-text-main">
                 I Love <span class="mini-heart">❤️</span> You Rasmalai
             </div>
@@ -784,9 +765,6 @@
             showFinal = true;
             const finalText = document.getElementById('final-text');
             finalText.style.display = 'flex';
-
-            const video = document.getElementById('final-video');
-            video.play().catch(err => console.log("Video autoplay suppressed"));
 
             setTimeout(() => {
                 finalText.style.opacity = '1';
