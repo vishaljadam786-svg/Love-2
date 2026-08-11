@@ -221,8 +221,39 @@
             position: relative;
         }
 
+        /* Reason Generator & Action Buttons */
+        .btn-reason {
+            margin-top: 12px;
+            background: linear-gradient(135deg, rgba(255, 0, 85, 0.3), rgba(255, 215, 0, 0.2));
+            border: 1px solid #ff3366;
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.4);
+            transition: transform 0.2s ease, background 0.3s;
+        }
+
+        .btn-reason:active {
+            transform: scale(0.95);
+        }
+
+        .reason-box {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #ffd700;
+            font-weight: 600;
+            min-height: 20px;
+            text-shadow: 0 0 8px #ffae00;
+            transition: all 0.3s ease;
+            max-width: 260px;
+        }
+
         .btn-replay {
-            margin-top: 15px;
+            margin-top: 10px;
             background: transparent;
             border: 1px solid #ffd700;
             color: #ffd700;
@@ -234,42 +265,92 @@
             box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
         }
 
-        /* Floating Polaroid Photos */
-        .polaroid {
+        /* 3D Flip Polaroid Card Styling */
+        .polaroid-card {
             position: absolute;
             width: 90px;
-            background: #fff;
-            padding: 5px 5px 18px 5px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border-radius: 4px;
+            height: 105px;
+            perspective: 1000px;
             pointer-events: auto;
-            animation: floatPhoto 4s ease-in-out infinite alternate;
-            transform: translateZ(0);
+            cursor: pointer;
+            z-index: 30;
         }
 
-        .polaroid img {
+        .polaroid-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .polaroid-card.flipped .polaroid-inner {
+            transform: rotateY(180deg);
+        }
+
+        .polaroid-front, .polaroid-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            background: #fff;
+            padding: 5px 5px 15px 5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .polaroid-front img {
             width: 100%;
             height: 80px;
             object-fit: cover;
             border-radius: 2px;
         }
 
+        .polaroid-back {
+            background: #2b0015;
+            border: 1px solid #ff3366;
+            color: #fff;
+            transform: rotateY(180deg);
+            padding: 8px 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .polaroid-back p {
+            font-size: 10px;
+            color: #ffd700;
+            font-weight: 700;
+            line-height: 1.2;
+            text-shadow: 0 0 5px #ff0055;
+        }
+
         .polaroid-1 {
             top: 15%;
             left: 8%;
-            transform: rotate(-10deg);
+            animation: floatPhoto1 4s ease-in-out infinite alternate;
         }
 
         .polaroid-2 {
             bottom: 18%;
             right: 8%;
-            transform: rotate(12deg);
-            animation-delay: -2s;
+            animation: floatPhoto2 4s ease-in-out infinite alternate;
         }
 
-        @keyframes floatPhoto {
-            0% { transform: translateY(0px) rotate(-8deg); }
+        @keyframes floatPhoto1 {
+            0% { transform: translateY(0px) rotate(-10deg); }
             100% { transform: translateY(-12px) rotate(-4deg); }
+        }
+
+        @keyframes floatPhoto2 {
+            0% { transform: translateY(0px) rotate(12deg); }
+            100% { transform: translateY(-12px) rotate(6deg); }
         }
 
         /* Celebration Modal */
@@ -373,6 +454,7 @@
 </head>
 <body>
 
+    <!-- Top Golden Music Button -->
     <button id="music-control" onclick="toggleAudio()">
         <span id="music-icon">🎵</span>
         <span id="music-btn-text">PLAY MUSIC</span>
@@ -382,18 +464,36 @@
 
     <audio id="bg-audio" src="audio.mp3" loop preload="auto"></audio>
 
+    <!-- Initial Start Button -->
     <div id="start-btn" onclick="startExperience(event)">
         <div class="heart-icon">❤️</div>
         <div class="btn-title">Tap to Start</div>
         <div class="btn-subtitle">EXPERIENCE THE MAGIC</div>
     </div>
 
+    <!-- Final Overlay Screen -->
     <div id="final-text">
-        <div class="polaroid polaroid-1">
-            <img src="image1.jpg" alt="Memory 1" onerror="this.src='image1.png'">
+        <!-- Interactive 3D Flip Polaroids -->
+        <div class="polaroid-card polaroid-1" onclick="flipCard(this)">
+            <div class="polaroid-inner">
+                <div class="polaroid-front">
+                    <img src="image1.jpg" alt="Memory 1" onerror="this.src='image1.png'">
+                </div>
+                <div class="polaroid-back">
+                    <p>Tap again to flip back! ✨<br><br><b>Your smile lights up my entire world 💖</b></p>
+                </div>
+            </div>
         </div>
-        <div class="polaroid polaroid-2">
-            <img src="image2.jpg" alt="Memory 2" onerror="this.src='image2.png'">
+
+        <div class="polaroid-card polaroid-2" onclick="flipCard(this)">
+            <div class="polaroid-inner">
+                <div class="polaroid-front">
+                    <img src="image2.jpg" alt="Memory 2" onerror="this.src='image2.png'">
+                </div>
+                <div class="polaroid-back">
+                    <p>Secret Memory 💌<br><br><b>Every moment with you is my favorite memory 🌸</b></p>
+                </div>
+            </div>
         </div>
 
         <div class="final-content">
@@ -409,10 +509,15 @@
                 <button id="no-btn" class="btn-no" onmouseover="dodgeNoButton()" onclick="dodgeNoButton()">NO 😜</button>
             </div>
 
+            <!-- Reason Generator Section -->
+            <button class="btn-reason" onclick="showRandomReason()">✨ Why You're Special?</button>
+            <div id="reason-display" class="reason-box"></div>
+
             <button class="btn-replay" onclick="replayMagic()">✨ REPLAY MAGIC</button>
         </div>
     </div>
 
+    <!-- Celebration Popup -->
     <div id="celebration-modal">
         <div class="modal-card">
             <h2>YAYYY! 🎉💖</h2>
@@ -447,6 +552,33 @@
                 popupVideo.load();
             }
         });
+
+        // Reasons List for Generator
+        const reasons = [
+            "Reason #1: Your smile instantly fixes my worst days! 😊",
+            "Reason #2: How cute you look when you get angry! 😜",
+            "Reason #3: You are my sweetest Rasmalai! 🍩💖",
+            "Reason #4: Your voice feels like my favorite song! 🎵",
+            "Reason #5: You make my life a hundred times brighter! ✨",
+            "Reason #6: Simply because you are YOU! ❤️"
+        ];
+        let currentReasonIndex = 0;
+
+        function showRandomReason() {
+            playSparkleSound();
+            const reasonBox = document.getElementById('reason-display');
+            reasonBox.style.opacity = '0';
+            setTimeout(() => {
+                reasonBox.textContent = reasons[currentReasonIndex];
+                reasonBox.style.opacity = '1';
+                currentReasonIndex = (currentReasonIndex + 1) % reasons.length;
+            }, 150);
+        }
+
+        function flipCard(card) {
+            playSparkleSound();
+            card.classList.toggle('flipped');
+        }
 
         let audioCtx;
         function playSparkleSound() {
@@ -520,7 +652,7 @@
         }
 
         window.addEventListener('click', (e) => {
-            if (e.target.closest('#music-control') || e.target.closest('.final-content') || e.target.closest('#celebration-modal')) return;
+            if (e.target.closest('#music-control') || e.target.closest('.final-content') || e.target.closest('#celebration-modal') || e.target.closest('.polaroid-card')) return;
             playSparkleSound();
             for (let i = 0; i < 5; i++) {
                 tapHearts.push(new TapHeart(e.clientX, e.clientY));
@@ -528,7 +660,7 @@
         });
 
         window.addEventListener('touchstart', (e) => {
-            if (e.target.closest('#music-control') || e.target.closest('.final-content') || e.target.closest('#celebration-modal')) return;
+            if (e.target.closest('#music-control') || e.target.closest('.final-content') || e.target.closest('#celebration-modal') || e.target.closest('.polaroid-card')) return;
             playSparkleSound();
             let touch = e.touches[0];
             for (let i = 0; i < 5; i++) {
@@ -536,7 +668,6 @@
             }
         });
 
-        /* Fixed Clean Falling Heart Class */
         class FallingHeart {
             constructor() {
                 this.reset();
